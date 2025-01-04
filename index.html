@@ -1,0 +1,156 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        form {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        #searchInput {
+            padding: 15px;
+            font-size: 18px;
+            border: 1px solid #ccc;
+            border-radius: 4px 0 0 4px;
+            width: 500px; /* 横幅を500pxに拡大 */
+        }
+
+        button, .toggle-button {
+            padding: 15px 20px;
+            font-size: 18px;
+            color: #fff;
+            background-color: #007BFF;
+            border: none;
+            cursor: pointer;
+        }
+
+        button {
+            border-radius: 0 4px 4px 0;
+        }
+
+        button:hover, .toggle-button:hover {
+            background-color: #0056b3;
+        }
+
+        .toggle-button {
+            background-color: #6c757d;
+            border-radius: 4px 0 0 4px;
+        }
+
+        .history-list {
+            position: absolute;
+            top: 55px;
+            left: 0;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100%;
+            max-height: 150px;
+            overflow-y: auto;
+            display: none;
+            z-index: 1000;
+        }
+
+        .history-item {
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .history-item:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <form id="searchForm">
+        <select id="searchType" class="toggle-button">
+            <option value="web">Web検索</option>
+            <option value="image">画像検索</option>
+            <option value="ai">AI検索</option>
+        </select>
+        <input type="text" id="searchInput" placeholder="Search..." autocomplete="off" required>
+        <button type="submit">Search</button>
+        <div id="historyList" class="history-list"></div>
+    </form>
+    <script>
+        // Function to update and display search history
+        function updateHistoryList() {
+            const historyList = document.getElementById('historyList');
+            const history = JSON.parse(localStorage.getItem('searchHistory')) || [];
+            historyList.innerHTML = '';  // Clear previous history list
+
+            history.forEach(item => {
+                const div = document.createElement('div');
+                div.textContent = item;
+                div.classList.add('history-item');
+                div.onclick = function() {
+                    document.getElementById('searchInput').value = item;
+                    historyList.style.display = 'none';
+                };
+                historyList.appendChild(div);
+            });
+
+            if (history.length > 0) {
+                historyList.style.display = 'block';
+            }
+        }
+
+        document.getElementById('searchInput').addEventListener('focus', function() {
+            updateHistoryList();
+        });
+
+        document.getElementById('searchInput').addEventListener('blur', function() {
+            setTimeout(() => {
+                document.getElementById('historyList').style.display = 'none';
+            }, 200);  // Delay to allow click event on history item
+        });
+
+        document.getElementById('searchForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const query = document.getElementById('searchInput').value;
+            const searchType = document.getElementById('searchType').value;
+
+            // Redirect to specific URLs based on input
+            if (query === '/twitter') {
+                window.open('https://twitter.com', '_blank');
+            } else if (query === '/gpt') {
+                window.open('https://chatgpt.com', '_blank');
+            } else if (query === '/loox') {
+                window.open('https://looxteam.wixsite.com/loox', '_blank');
+            } else if (query) {
+                // Save search history
+                let history = JSON.parse(localStorage.getItem('searchHistory')) || [];
+                if (!history.includes(query)) {
+                    history.unshift(query);  // Add new search at the beginning
+                    if (history.length > 10) history.pop();  // Limit history to 10 items
+                    localStorage.setItem('searchHistory', JSON.stringify(history));
+                }
+
+                // Search based on selected type
+                if (searchType === 'web') {
+                    window.open('https://www.google.com/search?q=' + encodeURIComponent(query), '_blank');
+                } else if (searchType === 'image') {
+                    window.open('https://www.google.com/search?tbm=isch&q=' + encodeURIComponent(query), '_blank');
+                } else if (searchType === 'ai') {
+                    window.open('https://www.genspark.ai/search?query=' + encodeURIComponent(query), '_blank');
+                }
+            } else {
+                // Redirect to specified URL if search box is empty
+                window.open('https://looxteam.wixsite.com/portal/search', '_blank');
+            }
+
+            document.getElementById('searchInput').value = '';  // Clear input after search
+        });
+    </script>
+</body>
+</html>
