@@ -125,8 +125,8 @@
                 window.open('https://twitter.com', '_blank');
             } else if (query === '/gpt') {
                 window.open('https://chatgpt.com', '_blank');
-            } else if (query === '/loox') {
-                window.open('https://looxteam.wixsite.com/loox', '_blank');
+            } else if (query === '/google') {
+                window.open('https://www.google.com/', '_blank');
             } else if (query) {
                 // Save search history
                 let history = JSON.parse(localStorage.getItem('searchHistory')) || [];
@@ -138,15 +138,15 @@
 
                 // Search based on selected type
                 if (searchType === 'web') {
-                    window.open('https://www.google.com/search?q=' + encodeURIComponent(query), '_blank');
+                    window.open('https://search.yahoo.co.jp/search?p=' + encodeURIComponent(query), '_blank');
                 } else if (searchType === 'image') {
-                    window.open('https://www.google.com/search?tbm=isch&q=' + encodeURIComponent(query), '_blank');
+                    window.open('https://search.yahoo.co.jp/image/search?p=' + encodeURIComponent(query), '_blank');
                 } else if (searchType === 'ai') {
                     window.open('https://www.genspark.ai/search?query=' + encodeURIComponent(query), '_blank');
                 }
             } else {
                 // Redirect to specified URL if search box is empty
-                window.open('https://looxteam.wixsite.com/portal/search', '_blank');
+                window.open('#', '_blank');
             }
 
             document.getElementById('searchInput').value = '';  // Clear input after search
