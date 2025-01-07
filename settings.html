@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search History Settings</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        .history-list {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #fff;
+            padding: 20px;
+            width: 300px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin-top: 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .delete-btn {
+            color: #ff0000;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .toggle-switch {
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .toggle-switch input {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>検索履歴を管理</h1>
+    <div class="history-list" id="historyList"></div>
+    <button id="clearHistory">全ての経歴を削除</button>
+
+    <div class="toggle-switch">
+        <input type="checkbox" id="saveHistoryToggle">
+        <label for="saveHistoryToggle">履歴が残るように設定</label>
+    </div>
+
+    <script>
+        // Function to update and display search history
+        function updateHistoryList() {
+            const historyList = document.getElementById('historyList');
+            const history = JSON.parse(localStorage.getItem('searchHistory')) || [];
+            historyList.innerHTML = '';  // Clear previous history list
+
+            if (history.length === 0) {
+                historyList.innerHTML = '<p>検索履歴は残ってません。</p>';
+            } else {
+                history.forEach((item, index) => {
+                    const div = document.createElement('div');
+                    div.classList.add('history-item');
+                    
+                    const span = document.createElement('span');
+                    span.textContent = item;
+                    
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.textContent = 'Delete';
+                    deleteBtn.classList.add('delete-btn');
+                    deleteBtn.onclick = function() {
+                        deleteHistoryItem(index);
+                    };
+
+                    div.appendChild(span);
+                    div.appendChild(deleteBtn);
+                    historyList.appendChild(div);
+                });
+            }
+        }
+
+        // Function to delete a single history item
+        function deleteHistoryItem(index) {
+            let history = JSON.parse(localStorage.getItem('searchHistory')) || [];
+            history.splice(index, 1);
+            localStorage.setItem('searchHistory', JSON.stringify(history));
+            updateHistoryList();
+        }
+
+        // Function to clear all history
+        document.getElementById('clearHistory').addEventListener('click', function() {
+            localStorage.removeItem('searchHistory');
+            updateHistoryList();
+        });
+
+        // Function to toggle history saving
+        const saveHistoryToggle = document.getElementById('saveHistoryToggle');
+        saveHistoryToggle.addEventListener('change', function() {
+            localStorage.setItem('saveHistory', saveHistoryToggle.checked ? 'true' : 'false');
+        });
+
+        // Update history list on page load
+        updateHistoryList();
+
+        // Set initial toggle state
+        saveHistoryToggle.checked = localStorage.getItem('saveHistory') === 'true';
+    </script>
+</body>
+</html>
